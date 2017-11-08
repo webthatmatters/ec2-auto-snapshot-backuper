@@ -1,0 +1,2 @@
+# AMAZON AWS
+00 18 * * * AWS_CONFIG_FILE="/home/dev/.aws/config" /opt/aws/ebs-snapshot.sh
