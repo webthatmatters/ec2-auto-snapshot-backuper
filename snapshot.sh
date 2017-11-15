@@ -1,6 +1,6 @@
 #!/bin/bash
 export PATH=$PATH:/usr/local/bin/:/usr/bin
-
+echo 1
 # Safety feature: exit script if error is returned, or if variables not set.
 # Exit if a pipeline results in an error.
 set -ue
@@ -36,7 +36,7 @@ read aws_profile
 read retention_days
 
 # Set Logging Options
-logfile="./logs/${snapshot_name,,}-snapshot.log"
+logfile="./logs/${snapshot_name// /_}-snapshot.log"
 logfile_max_lines="5000"
 
 # How many days do you wish to retain backups for? Default: 7 days
