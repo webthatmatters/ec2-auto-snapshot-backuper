@@ -72,7 +72,7 @@ Copy the `instances/example.conf` to your configuration file and replace existin
 vim instances/example.conf
 ```
 ```conf
-Snapshot Name          # Snapshot Name Attribute (no spaces available)
+Snapshot_Name          # Snapshot Name Attribute (no spaces available)
 i-04081123123123123    # EBS Instance id
 eu-west-1              # Instance Region
 default                # AWS CLI profile with access on the Instance
