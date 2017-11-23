@@ -1,6 +1,8 @@
-# EBS Automated Instance Snapshot Creator
+# EC2 Automated AWS Instance Snapshot Creator
 
 Connects to AWS CLI configured accounts and Creates a snapshot based on a cron for each specific Instance.
+
+Optionally, adds permission to AWS Manager Account to manage all snapshots from one account.
 
 ## Installation
 
@@ -28,6 +30,7 @@ Create the IAM Policy with permissions:
             "Action": [
                 "ec2:CreateSnapshot",
                 "ec2:CreateTags",
+                "ec2:ModifySnapshotAttribute",
                 "ec2:DeleteSnapshot",
                 "ec2:DescribeSnapshots",
                 "ec2:DescribeVolumes"
@@ -40,6 +43,8 @@ Create the IAM Policy with permissions:
 }
 ```
 Now create an IAM User for each AWS account with permissions on the instances and attach the backuper Policy to the User.
+
+`ModifySnapshotAttribute` is only required if manager account will exist.
 
 **CLI**
 
@@ -72,6 +77,7 @@ i-04081123123123123    # EBS Instance id
 eu-west-1              # Instance Region
 default                # AWS CLI profile with access on the Instance
 7                      # Amount of days you want to retain backups.
+
 ```
 
 ### Cronjobs
@@ -83,6 +89,20 @@ In order to create Snapshots in different frequency between Instances, you must 
 00 18 * * * AWS_CONFIG_FILE="/home/user/.aws/config" /path/to/ec2_snapshot_backuper/snapshot.sh < /path/to/ec2_snapshot_backuper/instances/dev_server.conf
 ```
 
+### Manageer Account (Optional)
+
+A manager account is used to copy all auto-created snapshots to 1 manager AWS account.
+
+Copy the `manager-example.conf` to `manager.conf` and replace existing values with the correct values
+
+```
+vim manager.conf
+```
+```conf
+default_aws_profile=default         # AWS CLI Manager configured profile
+default_aws_user_id=3500000000      # AWS User Id for the Manager Account
+```
+
 ## Logs
 
 Logs for each instance is created in the `logs` directory with the snapshot name on the file name.
@@ -90,5 +110,5 @@ Logs for each instance is created in the `logs` directory with the snapshot name
 Max lines per instance log file is 5000.
 
 -----
-
-The original snapshot script is written by [Casey Labs Inc.](https://www.caseylabs.com) and has been modified to our needs by [Monospace Labs Inc.](https://monospacelabs.com/)
+This script is created for Software Houses by [Web That Matters LLC.](https://webthatmatters.com/) to Automatically create and manage EC2 snapshots from Multiple Accounts. 
+The basic snapshot script is forked from [Casey Labs Inc.](https://www.caseylabs.com).
