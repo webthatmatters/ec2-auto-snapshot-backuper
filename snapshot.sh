@@ -62,7 +62,7 @@ manager_account_configuration() {
     while IFS='=' read -r key value
     do
       key=$(echo $key | tr '.' '_')
-      eval "${key}='${value}'"
+      declare -g "${key}=${value}"
     done < "$file"
   else
     default_aws_profile=$aws_profile'-no-match'
