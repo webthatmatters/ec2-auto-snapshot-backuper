@@ -87,13 +87,13 @@ snapshot_volumes() {
 
     # Add a "CreatedBy:AutomatedBackup" tag to the resulting snapshot.
     # Why? Because we only want to purge snapshots taken by the script later, and not delete snapshots manually taken.
-    aws --profile $aws_profile ec2 create-tags --region $region --resource $snapshot_id --tags Key=Name,Value=$snapshot_name Key=BackuperHostname,Value=$(hostname) Key=RootDevice,Value=$device_name Key=CreatedBy,Value=AutomatedBackup Key=RetenitonDays,Value=$retention_days
+    aws --profile $aws_profile ec2 create-tags --region $region --resource $snapshot_id --tags Key=Name,Value=$snapshot_name Key=BackuperHostname,Value=$(hostname) Key=RootDevice,Value=$device_name Key=CreatedBy,Value=AutomatedBackup Key=RetentionDays,Value=$retention_days
     # if manager.conf file exists will give permissions to manager account id and will re-add all snapshot tags to this account-snapshot as well
     
     if [ "$aws_profile" != "$default_aws_profile" ]; then
       log "Copying Snapshot to Manager Account."
       aws --profile $aws_profile ec2 modify-snapshot-attribute --region $region --snapshot-id $snapshot_id --attribute createVolumePermission --operation-type add --user-ids $default_aws_user_id
-      aws --profile $default_aws_profile ec2 create-tags --region $region --resource $snapshot_id --tags Key=Name,Value=$snapshot_name Key=BackuperHostname,Value=$(hostname) Key=RootDevice,Value=$device_name Key=CreatedBy,Value=AutomatedBackup Key=RetenitonDays,Value=$retention_days Key=AwsCliBackuperProfile,Value=$aws_profile 
+      aws --profile $default_aws_profile ec2 create-tags --region $region --resource $snapshot_id --tags Key=Name,Value=$snapshot_name Key=BackuperHostname,Value=$(hostname) Key=RootDevice,Value=$device_name Key=CreatedBy,Value=AutomatedBackup Key=RetentionDays,Value=$retention_days Key=AwsCliBackuperProfile,Value=$aws_profile 
     fi
   done
 }
