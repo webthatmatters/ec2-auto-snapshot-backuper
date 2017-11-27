@@ -42,7 +42,6 @@ retention_date_in_seconds=$(date +%s --date "$retention_days days ago")
 log() {
   echo "[$(date +"%Y-%m-%d"+"%T")]: $*"
 }
-
 # Function: Setup logfile and redirect stdout/stderr.
 log_setup() {
   # Check if logfile exists and is writable.
@@ -55,18 +54,11 @@ log_setup() {
 
 # Function: Manager AWS account configuration to manage all your snapshots from one account (manager.conf)
 manager_account_configuration() {
-  file="./manager.conf"
-
-  if [ -f "$file" ]
-  then
-    while IFS='=' read -r key value
-    do
-      key=$(echo $key | tr '.' '_')
-      declare -g "${key}=${value}"
-    done < "$file"
+  if ! . manager.conf &> /dev/null; then
+    log 'Manager Account not found.'
+    default_aws_profile=$aws_profile
   else
-    default_aws_profile=$aws_profile'-no-match'
-    log "Creating Snapshot without Manager Account."
+    log 'Manager Account found.'
   fi
 }
 
@@ -99,7 +91,7 @@ snapshot_volumes() {
     # if manager.conf file exists will give permissions to manager account id and will re-add all snapshot tags to this account-snapshot as well
     
     if [ "$aws_profile" != "$default_aws_profile" ]; then
-      log "Copying Snapshot to Manager Account"
+      log "Copying Snapshot to Manager Account."
       aws --profile $aws_profile ec2 modify-snapshot-attribute --region $region --snapshot-id $snapshot_id --attribute createVolumePermission --operation-type add --user-ids $default_aws_user_id
       aws --profile $default_aws_profile ec2 create-tags --region $region --resource $snapshot_id --tags Key=Name,Value=$snapshot_name Key=BackuperHostname,Value=$(hostname) Key=RootDevice,Value=$device_name Key=CreatedBy,Value=AutomatedBackup Key=RetenitonDays,Value=$retention_days Key=AwsCliBackuperProfile,Value=$aws_profile 
     fi
