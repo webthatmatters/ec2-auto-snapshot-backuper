@@ -30,7 +30,7 @@ read aws_profile
 read retention_days
 
 # Set Logging Options
-logfile="./logs/${snapshot_name// /_}-snapshot.log"
+logfile=$(dirname "$0")"/logs/${snapshot_name// /_}-snapshot.log"
 logfile_max_lines="5000"
 
 # How many days do you wish to retain backups for? Default: 7 days
@@ -54,7 +54,7 @@ log_setup() {
 
 # Function: Manager AWS account configuration to manage all your snapshots from one account (manager.conf)
 manager_account_configuration() {
-  if ! . manager.conf &> /dev/null; then
+  if ! . $(dirname "$0")/manager.conf &> /dev/null; then
     log 'Manager Account not found.'
     default_aws_profile=$aws_profile
   else
