@@ -50,6 +50,10 @@ log_setup() {
   tmplog=$(tail -n $logfile_max_lines $logfile 2>/dev/null) && echo "${tmplog}" > $logfile
   exec > >(tee -a $logfile)
   exec 2>&1
+  log '--------------------------------------------------------------------------------------------------------'
+  log '|'
+  log '|'
+  log '-------------------------------- AUTOMATED Snapshot Backup has started ----------- Time in UTC ---------'
 }
 
 # Function: Manager AWS account configuration to manage all your snapshots from one account (manager.conf)
